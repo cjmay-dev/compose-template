@@ -60,7 +60,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4.1.0
         id: aws-credentials
         with:
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: ${{ env.TFSTATE_BUCKET_REGION }}
           role-to-assume: ${{ env.AWS_ROLE_ARN }}
           output-credentials: true
 
