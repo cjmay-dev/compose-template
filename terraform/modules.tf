@@ -1,5 +1,5 @@
 module "b2_bucket" {
-  source        = "modules/b2-bucket"
+  source        = "./modules/b2-bucket"
   APP_SHORTNAME = var.APP_SHORTNAME
   ORG_SHORTNAME = var.ORG_SHORTNAME
   ENV_SLUG      = var.ENV_SLUG
@@ -8,7 +8,7 @@ module "b2_bucket" {
 }
 
 module "cloudflare_tunnel" {
-  source                = "modules/cloudflare-tunnel"
+  source                = "./modules/cloudflare-tunnel"
   APP_SHORTNAME         = var.APP_SHORTNAME
   ENV_SLUG              = var.ENV_SLUG
   CLOUDFLARE_DOMAIN     = data.infisical_secrets.cloudflare.secrets["CLOUDFLARE_DOMAIN"].value
@@ -18,7 +18,7 @@ module "cloudflare_tunnel" {
 }
 
 module "infisical_project" {
-  source        = "modules/infisical-project"
+  source        = "./modules/infisical-project"
   APP_SECRETS   = {
     "APP_SHORTNAME" = var.APP_SHORTNAME
     "ORG_SHORTNAME" = var.ORG_SHORTNAME
@@ -36,7 +36,7 @@ module "infisical_project" {
 }
 
 module "proxmox_vm" {
-  source        = "modules/proxmox-vm"
+  source        = "./modules/proxmox-vm"
   APP_SHORTNAME = var.APP_SHORTNAME
   LOCAL_DOMAIN  = data.infisical_secrets.proxmox.secrets["LOCAL_DOMAIN"].value
   ADMIN_USERNAME = data.infisical_secrets.proxmox.secrets["ADMIN_USERNAME"].value
