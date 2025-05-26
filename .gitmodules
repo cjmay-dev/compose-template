@@ -1,0 +1,6 @@
+[submodule "terraform/modules"]
+	path = terraform/modules
+	url = git@github.com:cjmay-dev/tf-modules
+[submodule "compose"]
+	path = compose
+	url = git@github.com:cjmay-dev/docker-compose-sidecars
