@@ -56,13 +56,13 @@ jobs:
           env-slug: ${{ matrix.environment }}
           recursive: "true"
 
-      - name: Configure AWS Credentials for tfstate bucket
-        uses: aws-actions/configure-aws-credentials@v4.1.0
-        id: aws-credentials
-        with:
-          aws-region: ${{ env.TFSTATE_BUCKET_REGION }}
-          role-to-assume: ${{ env.AWS_ROLE_ARN }}
-          output-credentials: true
+      # - name: Configure AWS Credentials for tfstate bucket
+      #   uses: aws-actions/configure-aws-credentials@v4.1.0
+      #   id: aws-credentials
+      #   with:
+      #     aws-region: ${{ env.TFSTATE_BUCKET_REGION }}
+      #     role-to-assume: ${{ env.AWS_ROLE_ARN }}
+      #     output-credentials: true
 
       - name: Setup Tailscale for PVE authentication
         uses: tailscale/github-action@v3
@@ -94,7 +94,8 @@ jobs:
         env:
           # tfstate backend variables
           AWS_ROLE_ARN: ${{ env.AWS_ROLE_ARN }}
-          AWS_OIDC_TOKEN: ${{ steps.aws-credentials.outputs.aws-session-token }}
+          AWS_OIDC_TOKEN: ${{ env.OIDC_TOKEN }}
+          # AWS_OIDC_TOKEN: ${{ steps.aws-credentials.outputs.aws-session-token }}
           AWS_TFSTATE_BUCKET: ${{ secrets.TFSTATE_BUCKET }}
           AWS_TFSTATE_BUCKET_REGION: ${{ env.TFSTATE_BUCKET_REGION }}
           # app variables
