@@ -1,0 +1,26 @@
+# ide
+.vscode
+
+# variables, secrets
+secrets/
+*.env
+*.env.local
+*.tfvars
+
+# temp
+tmp
+
+# Python virtual environment
+venv
+
+# Infisical
+.infisical.json
+
+# terraform
+.terraform
+.terraform.tfstate*
+terraform.tfstate*
+backend.tf
+
+# container volumes
+volumes/

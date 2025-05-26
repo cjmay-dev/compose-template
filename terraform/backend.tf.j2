@@ -1,0 +1,12 @@
+terraform {
+  backend "s3" {
+    bucket         = "{{ tfstate_bucket }}"
+    region         = "{{ tfstate_bucket_region }}"
+    key            = "{{ org_shortname }}_{{ app_shortname }}.{{ root_domain }}_{{ env_slug }}.tfstate"
+    use_lockfile   = true
+    assume_role_with_web_identity = {
+      role_arn           = "{{ aws_role_arn }}"
+      web_identity_token = "{{ aws_oidc_token }}"
+    }
+  }
+}
