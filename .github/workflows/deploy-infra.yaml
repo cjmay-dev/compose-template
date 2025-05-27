@@ -58,14 +58,6 @@ jobs:
           env-slug: ${{ matrix.environment }}
           recursive: "true"
 
-      # - name: Configure AWS Credentials for tfstate bucket
-      #   uses: aws-actions/configure-aws-credentials@v4.1.0
-      #   id: aws-credentials
-      #   with:
-      #     aws-region: ${{ env.TFSTATE_BUCKET_REGION }}
-      #     role-to-assume: ${{ env.AWS_ROLE_ARN }}
-      #     output-credentials: true
-
       - name: Setup Tailscale for PVE authentication
         uses: tailscale/github-action@v3
         with:
@@ -97,11 +89,10 @@ jobs:
           # tfstate backend variables
           AWS_ROLE_ARN: ${{ env.AWS_ROLE_ARN }}
           AWS_OIDC_TOKEN: ${{ env.AWS_TOKEN }}
-          # AWS_OIDC_TOKEN: ${{ steps.aws-credentials.outputs.aws-session-token }}
           AWS_TFSTATE_BUCKET: ${{ secrets.TFSTATE_BUCKET }}
           AWS_TFSTATE_BUCKET_REGION: ${{ env.TFSTATE_BUCKET_REGION }}
-          # app variables
           CLOUDFLARE_DOMAIN: ${{ env.CLOUDFLARE_DOMAIN }}
+          # repo-specific variables
           TF_VAR_APP_SHORTNAME: ${{ env.APP_SHORTNAME }}
           TF_VAR_ORG_SHORTNAME: ${{ env.ORG_SHORTNAME }}
           TF_VAR_ENV_SLUG: ${{ matrix.environment }}
@@ -109,5 +100,5 @@ jobs:
           INFISICAL_AUTH_JWT: ${{ env.INFISICAL_TOKEN }}
           INFISICAL_MACHINE_IDENTITY_ID: ${{ secrets.INFISICAL_MACHINE_IDENTITY_ID }}
           INFISICAL_HOST: ${{ secrets.INFISICAL_HOST }}
-          TF_VAR_INFISICAL_PROJECT_SLUG: ${{ secrets.INFISICAL_PROJECT_SLUG }}
-          TF_VAR_INFISICAL_ADMIN_USER: ${{ env.INFISICAL_ADMIN_USER }}
+          TF_VAR_INFISICAL_PROJECT_SLUG: ${{ secrets.INFISICAL_COMMON_SECRETS_SLUG }}
+          TF_VAR_INFISICAL_ADMIN_USER: ${{ secrets.INFISICAL_ADMIN_USER }}
