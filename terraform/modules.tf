@@ -23,7 +23,7 @@ module "infisical_project" {
     "APP_SHORTNAME" = var.APP_SHORTNAME
     "ORG_SHORTNAME" = var.ORG_SHORTNAME
     "CLOUDFLARE_DOMAIN" = data.infisical_secrets.cloudflare.secrets["CLOUDFLARE_DOMAIN"].value
-    "CLOUDFLARE_TUNNEL_TOKEN" = data.infisical_secrets.cloudflare.secrets["CLOUDFLARE_TUNNEL_TOKEN"].value
+    "CLOUDFLARE_TUNNEL_TOKEN" = module.cloudflare_tunnel.tunnel_token
     "B2_BUCKET_KEY_ID" = module.b2_bucket.bucket_key_id
     "B2_BUCKET_KEY_SECRET" = module.b2_bucket.bucket_key_secret
     "RESTIC_REPOSITORY" = module.b2_bucket.bucket_s3_uri
