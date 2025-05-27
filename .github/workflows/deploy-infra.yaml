@@ -44,9 +44,9 @@ jobs:
         run: |
           echo "Requesting OIDC token..."
           JWT=$(curl -s -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com" | jq -r '.value')
-          echo "AWS_TOKEN=$JWT" >> $GITHUB_ENV
+          echo "AWS_OIDC_TOKEN=$JWT" >> $GITHUB_ENV
           JWT=$(curl -s -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -r '.value')
-          echo "INFISICAL_TOKEN=$JWT" >> $GITHUB_ENV
+          echo "INFISICAL_AUTH_JWT=$JWT" >> $GITHUB_ENV
 
       - name: Get Infisical Secrets
         uses: Infisical/secrets-action@08d433afae6a851f9081d0563a01a55fdf96568b # v1.0.11
@@ -86,19 +86,10 @@ jobs:
       - name: Run Terraform
         run: make terraform
         env:
-          # tfstate backend variables
-          AWS_ROLE_ARN: ${{ env.AWS_ROLE_ARN }}
-          AWS_OIDC_TOKEN: ${{ env.AWS_TOKEN }}
-          AWS_TFSTATE_BUCKET: ${{ secrets.TFSTATE_BUCKET }}
-          AWS_TFSTATE_BUCKET_REGION: ${{ env.TFSTATE_BUCKET_REGION }}
-          CLOUDFLARE_DOMAIN: ${{ env.CLOUDFLARE_DOMAIN }}
-          # repo-specific variables
+          # Project information
           TF_VAR_APP_SHORTNAME: ${{ env.APP_SHORTNAME }}
           TF_VAR_ORG_SHORTNAME: ${{ env.ORG_SHORTNAME }}
           TF_VAR_ENV_SLUG: ${{ matrix.environment }}
-          # Infisical environment variables
-          INFISICAL_AUTH_JWT: ${{ env.INFISICAL_TOKEN }}
-          INFISICAL_MACHINE_IDENTITY_ID: ${{ secrets.INFISICAL_MACHINE_IDENTITY_ID }}
-          INFISICAL_HOST: ${{ secrets.INFISICAL_HOST }}
+          # Infisical environment
           TF_VAR_INFISICAL_PROJECT_SLUG: ${{ secrets.INFISICAL_COMMON_SECRETS_SLUG }}
           TF_VAR_INFISICAL_ADMIN_USER: ${{ secrets.INFISICAL_ADMIN_USER }}
