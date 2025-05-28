@@ -67,11 +67,6 @@ jobs:
           args: --accept-routes
           use-cache: "true"
 
-      - name: SSH Agent for PVE authentication
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ env.PVE_SSH_KEY }}
-
       - name: Get app and org names
         run: |
           repo=${{ github.repository }}
