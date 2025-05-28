@@ -80,7 +80,6 @@ jobs:
 
       - name: Run Terraform
         run: |
-          ssh-add -L
           make terraform
         env:
           # Project information
