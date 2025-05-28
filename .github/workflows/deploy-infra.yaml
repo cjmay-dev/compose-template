@@ -84,7 +84,9 @@ jobs:
           echo "ORG_SHORTNAME=$org" >> $GITHUB_ENV
 
       - name: Run Terraform
-        run: make terraform
+        run: |
+          ssh-add -L
+          make terraform
         env:
           # Project information
           TF_VAR_APP_SHORTNAME: ${{ env.APP_SHORTNAME }}
