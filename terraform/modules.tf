@@ -44,6 +44,7 @@ module "proxmox_vm" {
   ADMIN_USERNAME = data.infisical_secrets.proxmox.secrets["ADMIN_USERNAME"].value
   ADMIN_SSH_PUBLIC_KEY = data.infisical_secrets.proxmox.secrets["ADMIN_SSH_PUBLIC_KEY"].value
   ANSIBLE_SSH_PUBLIC_KEY = data.infisical_secrets.proxmox.secrets["ANSIBLE_SSH_PUBLIC_KEY"].value
+  ROOT_HASHED_PASSWORD = data.infisical_secrets.proxmox.secrets["ROOT_HASHED_PASSWORD"].value
   CPU_CORES    = 2
   MEMORY      = 4096
   DISK_SIZE   = 64
