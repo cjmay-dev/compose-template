@@ -1,9 +1,12 @@
-.PHONY: clean compose terraform-init terraform-plan terraform-apply
+.PHONY: clean compose terraform-init terraform-plan terraform-apply terraform-destroy
 
 compose:
 	@docker compose pull
 	@docker compose build
 	@docker compose up -d
+
+terraform-destroy: terraform/.terraform.lock.hcl
+	@terraform -chdir=terraform destroy -auto-approve
 
 terraform-apply: terraform/.terraform.lock.hcl
 	@terraform -chdir=terraform apply -auto-approve
