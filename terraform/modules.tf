@@ -39,6 +39,7 @@ module "infisical_project" {
 module "proxmox_vm" {
   source        = "./modules/proxmox-vm"
   PVE_HOST      = data.infisical_secrets.proxmox.secrets["PVE_HOST"].value
+  NODE_NAME     = "pve"
   APP_SHORTNAME = var.APP_SHORTNAME
   LOCAL_DOMAIN  = data.infisical_secrets.proxmox.secrets["LOCAL_DOMAIN"].value
   ADMIN_USERNAME = data.infisical_secrets.proxmox.secrets["ADMIN_USERNAME"].value
