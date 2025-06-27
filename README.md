@@ -1,50 +1,34 @@
-# compose-app-template
+# compose-template
 
-## How to use this template
-
-*__If this is your first time using this template__*, you'll need to follow the [first time setup instructions](#first-time-setup) to create the required "common secrets" project in Infisical. *__This only needs to be done once__*, and then all subsequent templates will use the same common secrets project.
-
-To use this template:
-
-* fork this repo and give it a name that will become the subdomain for your app
-* modify [`docker-compose.yaml`] to create a compose file with your app containers
-* make sure the `stack-back` and `traefik` labels are set on your new containers
-* wait for GitHub Actions to deploy the app's infrastructure or [deploy manually](#deploying-infrastructure-manually)
-* add the secrets for your app containers to the deployed Infisical project
-
-Read [Template Info](#template-info) for more details.
-
-*__After forking this template, replace all the contents above this line with your app's documentation.__*
-
----
-
-## App deployment
-
-### Deploy compose app
-
-Because the app's secrets are stored in an Infisical project, [Infisical CLI](https://infisical.com/docs/cli/overview) is needed to deploy the compose app. The `infisical run` command will inject these secrets just-in-time, ensuring they never touch the disk on the server.
-
-```bash
-infisical run --env prod --command "make compose" # explicitly pulls and builds containers before deploying
-```
-
----
-
-# Template Info
-
-This app's template uses Terraform and Docker Compose to deploy a compose app with the following capabilities built in out of the box:
+This project template uses Terraform and Docker Compose to deploy a compose app with the following capabilities built in out of the box:
 
 * automated volume and container backups using [stack-back](https://github.com/lawndoc/stack-back)
 * public access using [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/)
 * secure secret management using [Infisical](https://infisical.com)
 
-Altogether, the template containers use <50MB of memory and <0.5GB of disk space on your container host.
+Altogether, the template containers use <50MB of memory and <0.5GB of disk space on the container host.
 
-## Infrastructure deployment
+This template requires pre-existing infrastructure to work. See the [cjmay.dev](https://cjmay.dev) for details.
 
-### Automated infrastructure deployment
+## Using this template
 
-GitHub Actions will automatically deploy your infrastructure using the provided Terraform code. These resources will be created:
+To use this template:
+
+1. Create a new repo from this template. The repo name will become the subdomain for the app, excluding any "compose-" prefix (ex. compose-minecraft -> minecraft.yourdomain.com).
+2. Wait for GitHub Actions to deploy the app's infrastructure or [deploy dev infrastructure manually](#local-development).
+3. Modify `docker-compose.yaml` to create a compose file with the app containers.
+4. Make sure the `traefik` labels are set on the frontend container.
+5. Add any additional app secrets to the deployed Infisical project.
+
+---
+
+# *__Replace everything above this line with the app's documentation.__*
+
+## Running the app
+
+### Deployed resources
+
+GitHub Actions will automatically deploy the infrastructure using the provided Terraform code. These resources will be created:
 
 * Ubuntu server with Docker installed
 * Backblaze B2 bucket for backups
@@ -54,24 +38,47 @@ GitHub Actions will automatically deploy your infrastructure using the provided 
 * Infisical project for app secrets
 * Infisical secrets to access the above resources
 
-### Deploying infrastructure manually
+### Compose app startup
 
-If you prefer to run the Terraform code manually, disable the GitHub Action and follow these steps:
-
-Set environment variables
+After the infrastructure has been deployed, Ansible will configure the Ubuntu server and deploy the compose app on it. __Infisical CLI is used to inject app secrets just-in-time, ensuring the app's secrets never touch the disk on the server** (see snippet below).__ Any manual work done on the Ubuntu server will also require Infisical CLI.
 
 ```bash
-cp terraform.env.template terraform.env
-vim terraform.env # set variables as described above
-source terraform.env
+infisical run --env prod --command "make compose"
 ```
 
-Use the makefile to deploy the instrastrucure with Terraform
+Ansible handles updates in the same way, gracefully restarting services with Infisical CLI after the update has completed.
+
+** Some secrets may end up in a container's volume on-disk.
+
+## Local development
+
+To intialize a local development environment, follow these steps:
+
+1. Install Terraform and Infisical CLI tools
+2. Run `./local-init.sh` and follow the prompts
+3. Run `source .env.local`
+
+The `local-init.sh` script assumes you want to use the "dev" environment. If you want to use a different environment locally, make sure to update the `.infisical.json` file that is created during first-time setup, and then re-run `local-init.sh`.
+
+You can then deploy the infrastructure or compose project.
 
 ```bash
-make terraform
+make terraform-init
+make terraform-plan
+make terraform-apply
 ```
 
-## First time setup
+```bash
+make compose
+```
 
-This template requires pre-existing infrastructure to work. See the [cjmay.dev](https://cjmay.dev) for details.
+Make sure to remove `.env.local` when you are done. It can be regenerated by `local-init.sh` using your Infisical credentials at any time.
+
+## Miscellaneous info
+
+Some design choices were made that are helpful to know when using this template:
+
+* The `local-init.sh` script chooses the environment for Terraform resources based on the contents of `.infisical.json` which is initialized the first time `local-init.sh` is run.
+* The provided `Makefile` contains various shorthand commands for working with Terraform and Docker Compose. Be aware of the commands and flags being used to prevent unexpected behavior.
+* This project uses `stack-back` to backup all container volumes and databases on a default schedule. If the default backup configuration is undesireable, refer to [stack-back's docs](https://stack-back.readthedocs.io) for information on configuring `stack-back` to fine-tune backup settings.
+* Git submodules are used for this 

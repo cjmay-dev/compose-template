@@ -80,7 +80,9 @@ jobs:
 
       - name: Run Terraform
         run: |
-          make terraform
+          make terraform-init
+          make terraform-plan
+          make terraform-apply
         env:
           # Project information
           TF_VAR_APP_SHORTNAME: ${{ env.APP_SHORTNAME }}

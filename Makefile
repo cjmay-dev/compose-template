@@ -1,26 +1,25 @@
-.PHONY: clean compose terraform
+.PHONY: clean compose terraform-init terraform-plan terraform-apply
 
 compose:
 	@docker compose pull
 	@docker compose build
 	@docker compose up -d
 
-terraform: terraform/backend.tf terraform/.terraform.lock.hcl
-	@if [ -z "$GITHUB_ACTIONS" ]; then \
-		@echo "---WARNING---"; \
-		@echo "This target is only meant to be run in GitHub Actions."; \
-		@echo "If you know what you're doing, set GITHUB_ACTIONS=true"; \
-		@echo "-------------"; \
-		exit 1; \
-	fi
-	@terraform -chdir=terraform plan
+terraform-apply: terraform/.terraform.lock.hcl
 	@terraform -chdir=terraform apply -auto-approve
 
-terraform/backend.tf terraform/.terraform.lock.hcl:
+terraform-plan: terraform/.terraform.lock.hcl
+	@terraform -chdir=terraform plan
+
+terraform-init: terraform/.terraform.lock.hcl
+
+terraform/.terraform.lock.hcl: terraform/backend.tf
+	@terraform -chdir=terraform init -upgrade -migrate-state
+
+terraform/backend.tf:
 	@python3 -m venv venv
 	@./venv/bin/pip install -r scripts/requirements.txt
-	./venv/bin/python scripts/generate_tfstate_backend.py
-	@terraform -chdir=terraform init -upgrade
+	@./venv/bin/python scripts/generate_tfstate_backend.py
 
 clean:
 	@echo "Cleaning up..."
