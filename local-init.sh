@@ -29,6 +29,7 @@ if [ "$(jq -r '.defaultEnvironment' .infisical.json)" = "" ]; then
 fi
 
 infisical secrets --plain --recursive > .env.local 2> /dev/null
+
 # wrap values with single quotes to handle multi-line values
 tmp=.env.local.tmp
 : > "$tmp"
@@ -52,6 +53,7 @@ if [[ -n $key ]]; then
   printf "'%s'\n" "$esc" >> "$tmp"
 fi
 mv "$tmp" .env.local
+
 chmod 600 .env.local
 sed -i -E '/^[A-Z_][A-Z0-9_]*=/ s/^/export /' .env.local
 source .env.local
@@ -88,3 +90,5 @@ sed -i 's/oidc/universal/g' terraform/modules/infisical-project/providers_overri
 
 echo "Local development environment initialized."
 echo "Run 'source .env.local' to set environment variables."
+echo ""
+echo "Don't forget to 'rm .env.local' when you are done for the day."
