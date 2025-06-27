@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -e
 
 if ! terraform --version > /dev/null 2>&1; then
   echo "Terraform CLI is not installed. Please install it first."
@@ -11,15 +12,12 @@ if ! infisical --version > /dev/null 2>&1; then
   exit 1
 fi
 
-if ! infisical export -t nonexistent >/dev/null 2>&1; then
-  infisical login
-fi
-
-if [ -f .infisical.json ]; then
-  echo "Infisical is already initialized."
-else
+if [ ! -f .infisical.json ]; then
   echo "Initializing Infisical..."
   infisical init
+fi
+
+if [ "$(jq -r '.defaultEnvironment' .infisical.json)" = "" ]; then
   # assume the local environment is "dev"
   jq '.defaultEnvironment="dev"' .infisical.json > /tmp/infisical.$$.json \
     && mv /tmp/infisical.$$.json .infisical.json
@@ -81,5 +79,10 @@ if command -v jq >/dev/null 2>&1 && [ -f .infisical.json ]; then
   echo "export TF_VAR_ENV_SLUG='$TF_VAR_ENV_SLUG'" >> .env.local
 fi
 
-make terraform/backend.tf
+make terraform/backend.tf > /dev/null 2>&1
 sed -i '/assume_role_with_web_identity/,/}/d' terraform/backend.tf
+cp terraform/providers.tf terraform/providers_local_override.tf
+sed -i 's/oidc/universal/g' terraform/providers_local_override.tf
+
+echo "Local development environment initialized."
+echo "Run 'source .env.local' to set environment variables."
