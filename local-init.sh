@@ -65,15 +65,20 @@ if ! curl -k --silent --head $PROXMOX_VE_ENDPOINT > /dev/null; then
 fi
 
 export TF_VAR_INFISICAL_PROJECT_SLUG=$INFISICAL_COMMON_SECRETS_SLUG
+echo "export TF_VAR_INFISICAL_PROJECT_SLUG='$TF_VAR_INFISICAL_PROJECT_SLUG'" >> .env.local
 export TF_VAR_INFISICAL_ADMIN_USER=$INFISICAL_ADMIN_USER
+echo "export TF_VAR_INFISICAL_ADMIN_USER='$TF_VAR_INFISICAL_ADMIN_USER'" >> .env.local
 remote_url=$(git config --get remote.origin.url)
 remote_url=${remote_url%.git}
 path=${remote_url#*github.com[:/]}
 export TF_VAR_ORG_SHORTNAME=${path%%/*}
+echo "export TF_VAR_ORG_SHORTNAME='$TF_VAR_ORG_SHORTNAME'" >> .env.local
 repo_name=${path##*/}
 export TF_VAR_APP_SHORTNAME=${repo_name#compose-}
+echo "export TF_VAR_APP_SHORTNAME='$TF_VAR_APP_SHORTNAME'" >> .env.local
 if command -v jq >/dev/null 2>&1 && [ -f .infisical.json ]; then
   export TF_VAR_ENV_SLUG=$(jq -r '.defaultEnvironment // empty' .infisical.json)
+  echo "export TF_VAR_ENV_SLUG='$TF_VAR_ENV_SLUG'" >> .env.local
 fi
 
 make terraform/backend.tf
