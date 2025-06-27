@@ -21,7 +21,7 @@ venv
 .terraform.tfstate*
 terraform.tfstate*
 backend.tf
-*_local_override.tf
+*_override.tf
 
 # container volumes
 volumes/

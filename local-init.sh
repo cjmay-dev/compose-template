@@ -81,8 +81,10 @@ fi
 
 make terraform/backend.tf > /dev/null 2>&1
 sed -i '/assume_role_with_web_identity/,/}/d' terraform/backend.tf
-cp terraform/providers.tf terraform/providers_local_override.tf
-sed -i 's/oidc/universal/g' terraform/providers_local_override.tf
+cp terraform/providers.tf terraform/providers_override.tf
+sed -i 's/oidc/universal/g' terraform/providers_override.tf
+cp terraform/modules/infisical-project/providers.tf terraform/modules/infisical-project/providers_override.tf
+sed -i 's/oidc/universal/g' terraform/modules/infisical-project/providers_override.tf
 
 echo "Local development environment initialized."
 echo "Run 'source .env.local' to set environment variables."
