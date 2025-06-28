@@ -17,7 +17,7 @@ venv
 .infisical.json
 
 # Ansible
-ansible/inventory.yml
+ansible/inventory.ini
 
 # terraform
 .terraform
