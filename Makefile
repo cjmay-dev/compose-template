@@ -1,9 +1,15 @@
-.PHONY: clean compose terraform-init terraform-plan terraform-apply terraform-destroy
+.PHONY: clean compose configure terraform-init terraform-plan terraform-apply terraform-destroy
 
 compose:
 	@docker compose pull
 	@docker compose build
 	@docker compose up -d
+
+configure: ansible/inventory.yml
+	@ansible-playbook -i ansible/inventory.yml ansible/docker-host-setup.yml
+
+ansible/inventory.yml:
+	@echo "${APP_SHORTNAME}.${LOCAL_DOMAIN}" > ansible/inventory.yml
 
 terraform-destroy: terraform/.terraform.lock.hcl
 	@terraform -chdir=terraform destroy \

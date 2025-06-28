@@ -1,0 +1,8 @@
+---
+- name: Configure Docker Host VM
+  hosts: docker_host
+  become: yes
+  roles:
+    - ubuntu
+    - docker
+    - infisical-cli
