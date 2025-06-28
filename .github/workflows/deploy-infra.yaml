@@ -13,7 +13,7 @@ on:
     inputs:
       TF_LOG:
         description: 'Terraform log level'
-        required: false
+        required: true
         default: 'INFO'
 
 permissions:
@@ -96,6 +96,8 @@ jobs:
           # Infisical environment
           TF_VAR_INFISICAL_PROJECT_SLUG: ${{ secrets.INFISICAL_COMMON_SECRETS_SLUG }}
           TF_VAR_INFISICAL_ADMIN_USER: ${{ secrets.INFISICAL_ADMIN_USER }}
+          # Set log level on workflow dispatch
+          TF_LOG: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.TF_LOG || 'INFO' }}
 
       - name: Print job summary
         uses: sgametrio/terraform-summary-action@v1.1.0
