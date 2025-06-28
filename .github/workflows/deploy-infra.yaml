@@ -81,7 +81,7 @@ jobs:
       - name: Run Terraform
         run: |
           make terraform-init
-          make terraform-plan
+          make terraform-plan | tee terraform_plan.txt
           make terraform-apply
         env:
           # Project information
@@ -91,3 +91,9 @@ jobs:
           # Infisical environment
           TF_VAR_INFISICAL_PROJECT_SLUG: ${{ secrets.INFISICAL_COMMON_SECRETS_SLUG }}
           TF_VAR_INFISICAL_ADMIN_USER: ${{ secrets.INFISICAL_ADMIN_USER }}
+
+      - name: Print job summary
+        uses: sgametrio/terraform-summary-action@v1.1.0
+        with:
+          log-file: terraform_plan.txt
+          title: "Terraform Changes"
