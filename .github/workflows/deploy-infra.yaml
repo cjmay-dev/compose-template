@@ -78,11 +78,6 @@ jobs:
           org=$(echo "$repo" | cut -d "/" -f 1)
           echo "ORG_SHORTNAME=$org" >> $GITHUB_ENV
 
-      - name: Debug Terraform on workflow dispatch
-        if: ${{ github.event_name == 'workflow_dispatch' }}
-        run: |
-          export TF_LOG=TRACE
-
       - name: Run Terraform
         run: |
           make terraform-init
@@ -96,6 +91,8 @@ jobs:
           # Infisical environment
           TF_VAR_INFISICAL_PROJECT_SLUG: ${{ secrets.INFISICAL_COMMON_SECRETS_SLUG }}
           TF_VAR_INFISICAL_ADMIN_USER: ${{ secrets.INFISICAL_ADMIN_USER }}
+          # Debug on workflow dispatch
+          TF_LOG: ${{ github.event_name == 'workflow_dispatch' && 'TRACE' || 'INFO' }}
 
       - name: Print job summary
         uses: sgametrio/terraform-summary-action@v1.1.0
