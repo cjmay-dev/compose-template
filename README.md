@@ -2,7 +2,7 @@
 
 This project template uses Terraform and Docker Compose to deploy a compose app with the following capabilities built in out of the box:
 
-* automated volume and container backups using [stack-back](https://github.com/lawndoc/stack-back)
+* automated volume and database backups using [stack-back](https://github.com/lawndoc/stack-back)
 * public access using [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/)
 * just-in-time secret injection using [Infisical](https://infisical.com)
 
