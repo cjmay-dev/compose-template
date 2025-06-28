@@ -5,12 +5,17 @@ compose:
 	@docker compose build
 	@docker compose up -d
 
-configure: ansible/inventory.ini
-	@ansible-playbook -i ansible/inventory.ini ansible/docker-host-setup.yml 
+configure: ansible/inventory.ini ansible_ssh_private_key
+	@ansible-playbook --private-key ansible_ssh_private_key -i ansible/inventory.ini ansible/docker-host-setup.yml
+	@rm -f ansible_ssh_private_key
+
+ansible_ssh_private_key:
+	@printf '%s\n' "$$ANSIBLE_SSH_PRIVATE_KEY" > ansible_ssh_private_key
+	@chmod 600 ansible_ssh_private_key
 
 ansible/inventory.ini:
 	@cp ansible/inventory.ini.template ansible/inventory.ini
-	@echo "${APP_SHORTNAME}.${LOCAL_DOMAIN}" ansible_user=ansible >> ansible/inventory.ini
+	@echo "$$APP_SHORTNAME.$$LOCAL_DOMAIN ansible_user=ansible" >> ansible/inventory.ini
 
 tf-destroy: terraform/.terraform.lock.hcl
 	@terraform -chdir=terraform destroy \
