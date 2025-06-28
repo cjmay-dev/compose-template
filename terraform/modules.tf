@@ -22,6 +22,8 @@ module "infisical_project" {
   APP_SECRETS   = {
     "APP_SHORTNAME" = var.APP_SHORTNAME
     "ORG_SHORTNAME" = var.ORG_SHORTNAME
+    "ANSIBLE_BECOME_PASSWORD" = module.proxmox_vm.ansible_password
+    "ANSIBLE_SSH_PRIVATE_KEY" = module.proxmox_vm.ansible_ssh_private_key
     "CLOUDFLARE_DOMAIN" = data.infisical_secrets.cloudflare.secrets["CLOUDFLARE_DOMAIN"].value
     "CLOUDFLARE_TUNNEL_TOKEN" = module.cloudflare_tunnel.tunnel_token
     "B2_BUCKET_KEY_ID" = module.b2_bucket.bucket_key_id
@@ -44,8 +46,6 @@ module "proxmox_vm" {
   LOCAL_DOMAIN  = data.infisical_secrets.proxmox.secrets["LOCAL_DOMAIN"].value
   ADMIN_USERNAME = data.infisical_secrets.proxmox.secrets["ADMIN_USERNAME"].value
   ADMIN_SSH_PUBLIC_KEY = data.infisical_secrets.proxmox.secrets["ADMIN_SSH_PUBLIC_KEY"].value
-  ANSIBLE_SSH_PUBLIC_KEY = data.infisical_secrets.proxmox.secrets["ANSIBLE_SSH_PUBLIC_KEY"].value
-  ROOT_HASHED_PASSWORD = data.infisical_secrets.proxmox.secrets["ROOT_HASHED_PASSWORD"].value
   CPU_CORES    = 2
   MEMORY      = 4096
   DISK_SIZE   = 64
