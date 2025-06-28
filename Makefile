@@ -18,11 +18,12 @@ terraform-destroy: terraform/.terraform.lock.hcl
 	@echo "  - Backups B2 bucket"
 	@echo "  - Proxmox VM"
 
-terraform-apply: terraform/.terraform.lock.hcl
-	@terraform -chdir=terraform apply -auto-approve
+terraform-apply: terraform/plan.out
+	@terraform -chdir=terraform apply -auto-approve plan.out
+	@rm -f terraform/plan.out
 
-terraform-plan: terraform/.terraform.lock.hcl
-	@terraform -chdir=terraform plan
+terraform-plan terraform/plan.out: terraform/.terraform.lock.hcl
+	@terraform -chdir=terraform plan -out=plan.out
 
 terraform-init: terraform/.terraform.lock.hcl
 

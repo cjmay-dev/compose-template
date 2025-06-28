@@ -22,6 +22,7 @@ venv
 terraform.tfstate*
 backend.tf
 *_override.tf
+plan.out
 
 # container volumes
 volumes/
