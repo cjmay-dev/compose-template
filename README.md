@@ -4,7 +4,7 @@ This project template uses Terraform and Docker Compose to deploy a compose app 
 
 * automated volume and container backups using [stack-back](https://github.com/lawndoc/stack-back)
 * public access using [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/)
-* secure secret management using [Infisical](https://infisical.com)
+* just-in-time secret injection using [Infisical](https://infisical.com)
 
 Altogether, the template containers use <50MB of memory and <0.5GB of disk space on the container host.
 
