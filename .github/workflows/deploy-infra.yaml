@@ -10,6 +10,11 @@ on:
       - '.github/workflows/deploy-infra.yaml'
       - 'scripts/generate_tfstate_backend.py'
   workflow_dispatch:
+    inputs:
+      TF_LOG:
+        description: 'Terraform log level'
+        required: false
+        default: 'INFO'
 
 permissions:
   id-token: write
@@ -91,8 +96,6 @@ jobs:
           # Infisical environment
           TF_VAR_INFISICAL_PROJECT_SLUG: ${{ secrets.INFISICAL_COMMON_SECRETS_SLUG }}
           TF_VAR_INFISICAL_ADMIN_USER: ${{ secrets.INFISICAL_ADMIN_USER }}
-          # Debug on workflow dispatch
-          TF_LOG: ${{ github.event_name == 'workflow_dispatch' && 'TRACE' || 'INFO' }}
 
       - name: Print job summary
         uses: sgametrio/terraform-summary-action@v1.1.0
