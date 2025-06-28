@@ -1,4 +1,4 @@
-.PHONY: clean compose configure terraform-init terraform-plan terraform-apply terraform-destroy
+.PHONY: clean compose configure lock terraform-init terraform-plan terraform-apply terraform-destroy
 
 compose:
 	@docker compose pull
@@ -41,9 +41,15 @@ terraform/backend.tf:
 	@./venv/bin/pip install -r scripts/requirements.txt
 	@./venv/bin/python scripts/generate_tfstate_backend.py
 
+lock:
+	@echo "Removing access to secrets..."
+	@rm -f .env.local
+	@infisical reset
+
 clean:
 	@echo "Cleaning up..."
 	@docker compose down 2> /dev/null || echo
-	@rm -f terraform/backend.tf terraform/.terraform.lock.hcl terraform/errored.tfstate
+	@rm -f ansible/inventory.yml
+	@rm -f terraform/backend.tf terraform/.terraform.lock.hcl terraform/providers_override.tf terraform/errored.tfstate terraform/plan.out
 	@rm -rf terraform/.terraform
 	@rm -rf venv
