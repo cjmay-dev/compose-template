@@ -6,7 +6,17 @@ compose:
 	@docker compose up -d
 
 terraform-destroy: terraform/.terraform.lock.hcl
-	@terraform -chdir=terraform destroy -auto-approve
+	@terraform -chdir=terraform destroy \
+	-target=module.infisical_project \
+	-target=module.cloudflare_tunnel \
+	-target=module.b2_bucket.b2_application_key.backups_key \
+	-auto-approve
+	@terraform -chdir=terraform state rm 'module.b2_bucket.b2_bucket.backups' > /dev/null 2>&1 || echo
+	@terraform -chdir=terraform state rm 'module.proxmox_vm' > /dev/null 2>&1 || echo
+	@echo ""
+	@echo "The following resources have been removed from the state and must be cleaned up manually:"
+	@echo "  - Backups B2 bucket"
+	@echo "  - Proxmox VM"
 
 terraform-apply: terraform/.terraform.lock.hcl
 	@terraform -chdir=terraform apply -auto-approve
