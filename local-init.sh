@@ -12,6 +12,8 @@ if ! infisical --version > /dev/null 2>&1; then
   exit 1
 fi
 
+infisical export -t nonexistent  # does nothing if logged in
+
 if [ ! -f .infisical.json ]; then
   echo "Initializing Infisical..."
   infisical init
