@@ -5,4 +5,4 @@
   roles:
     - ubuntu
     - docker
-    - infisical-cli
+    - infisical
