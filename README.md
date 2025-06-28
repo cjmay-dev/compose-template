@@ -96,7 +96,9 @@ make configure
 make compose
 ```
 
-Make sure to remove `.env.local` and log out of Infisical CLI when you are done for the day so your secrets don't sit on your daily driver.
+### Remove local secrets when done
+
+Make sure to remove `.env.local` and log out of Infisical CLI when you are done for the day so secrets don't sit on your development machine.
 
 ```bash
 make lock
