@@ -78,6 +78,7 @@ echo "export TF_VAR_ORG_SHORTNAME='$TF_VAR_ORG_SHORTNAME'" >> .env.local
 repo_name=${path##*/}
 export TF_VAR_APP_SHORTNAME=${repo_name#compose-}
 echo "export TF_VAR_APP_SHORTNAME='$TF_VAR_APP_SHORTNAME'" >> .env.local
+echo "export APP_SHORTNAME='$TF_VAR_APP_SHORTNAME'" >> .env.local
 if command -v jq >/dev/null 2>&1 && [ -f .infisical.json ]; then
   export TF_VAR_ENV_SLUG=$(jq -r '.defaultEnvironment // empty' .infisical.json)
   echo "export TF_VAR_ENV_SLUG='$TF_VAR_ENV_SLUG'" >> .env.local
