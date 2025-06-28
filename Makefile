@@ -1,4 +1,4 @@
-.PHONY: clean compose configure lock terraform-init terraform-plan terraform-apply terraform-destroy
+.PHONY: clean compose configure lock tf-init tf-plan tf-apply tf-destroy
 
 compose:
 	@docker compose pull
@@ -12,7 +12,7 @@ ansible/inventory.ini:
 	@cp ansible/inventory.ini.template ansible/inventory.ini
 	@echo "${APP_SHORTNAME}.${LOCAL_DOMAIN}" ansible_user=ansible >> ansible/inventory.ini
 
-terraform-destroy: terraform/.terraform.lock.hcl
+tf-destroy: terraform/.terraform.lock.hcl
 	@terraform -chdir=terraform destroy \
 	-target=module.infisical_project \
 	-target=module.cloudflare_tunnel \
@@ -25,14 +25,14 @@ terraform-destroy: terraform/.terraform.lock.hcl
 	@echo "  - Backups B2 bucket"
 	@echo "  - Proxmox VM"
 
-terraform-apply: terraform/plan.out
+tf-apply: terraform/plan.out
 	@terraform -chdir=terraform apply -auto-approve plan.out
 	@rm -f terraform/plan.out
 
-terraform-plan terraform/plan.out: terraform/.terraform.lock.hcl
+tf-plan terraform/plan.out: terraform/.terraform.lock.hcl
 	@terraform -chdir=terraform plan -out=plan.out
 
-terraform-init terraform/.terraform.lock.hcl: terraform/backend.tf
+tf-init terraform/.terraform.lock.hcl: terraform/backend.tf
 	@terraform -chdir=terraform init -upgrade -migrate-state
 
 terraform/backend.tf:

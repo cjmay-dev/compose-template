@@ -85,9 +85,9 @@ jobs:
 
       - name: Run Terraform
         run: |
-          make terraform-init
-          make terraform-plan | tee terraform_plan.txt
-          make terraform-apply
+          make tf-init
+          make tf-plan | tee terraform_plan.txt
+          make tf-apply
         env:
           # Project information
           TF_VAR_APP_SHORTNAME: ${{ env.APP_SHORTNAME }}

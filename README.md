@@ -63,9 +63,9 @@ The `local-init.sh` script assumes you want to use the "dev" environment. If you
 You can then deploy the infrastructure with terraform
 
 ```bash
-make terraform-init
-make terraform-plan
-make terraform-apply
+make tf-init
+make tf-plan
+make tf-apply
 ```
 
 ..or configure the docker host with ansible
