@@ -78,6 +78,11 @@ jobs:
           org=$(echo "$repo" | cut -d "/" -f 1)
           echo "ORG_SHORTNAME=$org" >> $GITHUB_ENV
 
+      - name: Debug Terraform on workflow dispatch
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          export TF_LOG=TRACE
+
       - name: Run Terraform
         run: |
           make terraform-init
