@@ -55,10 +55,18 @@ Ansible handles updates in the same way, gracefully restarting services with Inf
 To intialize a local development environment, follow these steps:
 
 1. Install Terraform and Infisical CLI tools
-2. Run `./local-init.sh` and follow the prompts
+2. Run `./local-init.sh <infra|app>` and follow the prompts
 3. Run `source .env.local`
 
 The `local-init.sh` script assumes you want to use the "dev" environment. If you want to use a different environment locally, make sure to update the `.infisical.json` file that is created during first-time setup, and then re-run `local-init.sh`.
+
+### Infrastructure development
+
+Use the local init script
+
+```bash
+./local-init.sh infra
+```
 
 You can then deploy the infrastructure with terraform
 
@@ -68,7 +76,15 @@ make tf-plan
 make tf-apply
 ```
 
-..or configure the docker host with ansible
+### Ansible or Docker Compose development
+
+Use the local init script
+
+```bash
+./local-init.sh app
+```
+
+You can then configure the docker host with ansible
 
 ```bash
 make configure

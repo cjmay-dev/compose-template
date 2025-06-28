@@ -15,9 +15,11 @@ venv
 
 # Infisical
 .infisical.json
+.infisical_workspace
 
 # Ansible
 ansible/inventory.ini
+ansible_ssh_private_key
 
 # terraform
 .terraform
