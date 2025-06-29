@@ -23,6 +23,7 @@ module "infisical_project" {
     "APP_SHORTNAME" = var.APP_SHORTNAME
     "ORG_SHORTNAME" = var.ORG_SHORTNAME
     "LOCAL_DOMAIN" = data.infisical_secrets.proxmox.secrets["LOCAL_DOMAIN"].value
+    "GITHUB_REPOSITORY" = var.GITHUB_REPOSITORY
     "ANSIBLE_BECOME_PASSWORD" = module.proxmox_vm.ansible_password
     "ANSIBLE_SSH_PRIVATE_KEY" = module.proxmox_vm.ansible_ssh_private_key
     "CLOUDFLARE_DOMAIN" = data.infisical_secrets.cloudflare.secrets["CLOUDFLARE_DOMAIN"].value
@@ -37,6 +38,7 @@ module "infisical_project" {
   ORG_SHORTNAME = var.ORG_SHORTNAME
   DOMAIN        = data.infisical_secrets.cloudflare.secrets["CLOUDFLARE_DOMAIN"].value
   ENV_SLUG      = var.ENV_SLUG
+  GITHUB_REPOSITORY   = var.GITHUB_REPOSITORY
   INFISICAL_ADMIN_USER = data.infisical_secrets.infisical.secrets["INFISICAL_ADMIN_USER"].value
 }
 

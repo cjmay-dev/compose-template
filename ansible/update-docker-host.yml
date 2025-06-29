@@ -32,7 +32,7 @@
 
     - name: Ensure git repository is present and up to date
       ansible.builtin.git:
-        repo: https://github.com/{{ lookup('env', 'GITHUB_REPOSITORY') }}.git
+        repo: https://github.com/{{ lookup('env', 'GITHUB_REPOSITORY') }}
         dest: /opt/app
         version: main
         update: yes

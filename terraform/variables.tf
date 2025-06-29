@@ -16,6 +16,12 @@ variable "ENV_SLUG" {
     default     = "prod"
 }
 
+variable "GITHUB_REPOSITORY" {
+    description = "GitHub repository in the format 'owner/repo'"
+    type        = string
+    default     = "owner/repo"
+}
+
 variable "INFISICAL_PROJECT_SLUG" {
     description = "Project slug for common/shared secrets"
     type        = string

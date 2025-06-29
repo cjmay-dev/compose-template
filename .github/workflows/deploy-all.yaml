@@ -93,6 +93,7 @@ jobs:
           TF_VAR_APP_SHORTNAME: ${{ env.APP_SHORTNAME }}
           TF_VAR_ORG_SHORTNAME: ${{ env.ORG_SHORTNAME }}
           TF_VAR_ENV_SLUG: ${{ matrix.environment }}
+          TF_VAR_GITHUB_REPOSITORY: ${{ github.repository }}
           # Infisical environment
           TF_VAR_INFISICAL_PROJECT_SLUG: ${{ secrets.INFISICAL_COMMON_SECRETS_SLUG }}
           TF_VAR_INFISICAL_ADMIN_USER: ${{ secrets.INFISICAL_ADMIN_USER }}
@@ -216,5 +217,3 @@ jobs:
       - name: Run Ansible setup playbook
         run: |
           make deploy
-        env:
-          GITHUB_REPOSITORY: ${{ github.repository }}
