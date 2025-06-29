@@ -40,7 +40,7 @@ tf-destroy: terraform/.terraform.lock.hcl
 	@echo "  - Proxmox VM"
 
 tf-apply: terraform/plan.out
-	@terraform -chdir=terraform apply -auto-approve plan.out
+	@terraform -chdir=terraform apply -auto-approve plan.out || rm -f terraform/plan.out
 	@rm -f terraform/plan.out
 
 tf-plan terraform/plan.out: terraform/.terraform.lock.hcl
