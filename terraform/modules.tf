@@ -33,6 +33,7 @@ module "infisical_project" {
     "STACKBACK_DISCORD_WEBHOOK" = data.infisical_secrets.backup.secrets["STACKBACK_DISCORD_WEBHOOK"].value
   }
   APP_SHORTNAME = var.APP_SHORTNAME
+  ORG_SHORTNAME = var.ORG_SHORTNAME
   DOMAIN        = data.infisical_secrets.cloudflare.secrets["CLOUDFLARE_DOMAIN"].value
   ENV_SLUG      = var.ENV_SLUG
   INFISICAL_ADMIN_USER = data.infisical_secrets.infisical.secrets["INFISICAL_ADMIN_USER"].value
