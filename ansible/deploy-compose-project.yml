@@ -1,0 +1,17 @@
+---
+- name: Deploy docker compose project
+  hosts: docker_host
+  become: yes
+  tasks:
+    - name: Ensure repository is present and up to date
+      ansible.builtin.git:
+        repo: https://github.com/{{ lookup('env', 'GITHUB_REPOSITORY') }}.git
+        dest: /opt/app
+        version: main
+        update: yes
+
+    - name: Deploy docker compose project
+      shell: |
+        cd /opt/app
+        make compose
+      environment: "{{ ansible_env }}"

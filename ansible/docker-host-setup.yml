@@ -1,5 +1,5 @@
 ---
-- name: Configure Docker Host VM
+- name: Configure docker host
   hosts: docker_host
   become: yes
   roles:

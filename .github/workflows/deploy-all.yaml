@@ -1,0 +1,220 @@
+name: Deploy Infrastructure and Application
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'terraform/**'
+      - 'ansible/**'
+      - 'Makefile'
+      - '.github/workflows/deploy-infra.yaml'
+      - 'scripts/generate_tfstate_backend.py'
+  workflow_dispatch:
+    inputs:
+      TF_LOG:
+        description: 'Terraform log level'
+        required: true
+        default: 'INFO'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: # uncomment additional environments
+          # - staging
+          - prod
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          submodules: recursive
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3
+        with:
+          terraform_wrapper: false
+
+      - name: Setup Python
+        uses: actions/setup-python@8d9ed9ac5c53483de85588cdf95a591a75ab9f55 # v5
+        with:
+          python-version: '3.13'
+
+      - name: Request OIDC Token
+        run: |
+          echo "Requesting OIDC token..."
+          JWT=$(curl -s -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com" | jq -r '.value')
+          echo "AWS_OIDC_TOKEN=$JWT" >> $GITHUB_ENV
+          JWT=$(curl -s -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -r '.value')
+          echo "INFISICAL_AUTH_JWT=$JWT" >> $GITHUB_ENV
+
+      - name: Get Infisical Secrets
+        uses: Infisical/secrets-action@08d433afae6a851f9081d0563a01a55fdf96568b # v1.0.11
+        with:
+          method: "oidc"
+          domain: ${{ secrets.INFISICAL_HOST }}
+          identity-id: ${{ secrets.INFISICAL_MACHINE_IDENTITY_ID }}
+          project-slug: ${{ secrets.INFISICAL_COMMON_SECRETS_SLUG }}
+          env-slug: ${{ matrix.environment }}
+          recursive: "true"
+
+      - name: Setup Tailscale for PVE authentication
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ env.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ env.TS_OAUTH_SECRET }}
+          tags: tag:ci
+          args: --accept-routes
+          use-cache: "true"
+
+      - name: Get app and org names
+        run: |
+          repo=${{ github.repository }}
+          app=$(echo "$repo" | cut -d "/" -f 2 | sed 's/compose-//')
+          if [[ "${{ matrix.environment }}" != "prod" ]]; then
+            app="${app}-${{ matrix.environment }}"
+          fi
+          echo "APP_SHORTNAME=$app" >> $GITHUB_ENV
+          org=$(echo "$repo" | cut -d "/" -f 1)
+          echo "ORG_SHORTNAME=$org" >> $GITHUB_ENV
+
+      - name: Run Terraform
+        run: |
+          make tf-init
+          make tf-plan | tee terraform_plan.txt
+          make tf-apply
+        env:
+          # Project information
+          TF_VAR_APP_SHORTNAME: ${{ env.APP_SHORTNAME }}
+          TF_VAR_ORG_SHORTNAME: ${{ env.ORG_SHORTNAME }}
+          TF_VAR_ENV_SLUG: ${{ matrix.environment }}
+          # Infisical environment
+          TF_VAR_INFISICAL_PROJECT_SLUG: ${{ secrets.INFISICAL_COMMON_SECRETS_SLUG }}
+          TF_VAR_INFISICAL_ADMIN_USER: ${{ secrets.INFISICAL_ADMIN_USER }}
+          # Set log level on workflow dispatch
+          TF_LOG: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.TF_LOG || 'INFO' }}
+
+      - name: Print job summary
+        uses: sgametrio/terraform-summary-action@v1.1.0
+        with:
+          log-file: terraform_plan.txt
+          title: "Terraform Changes"
+
+  configure-docker-host:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment:
+          # - staging
+          - prod
+    name: Configure Docker Host
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+
+      - name: Set up Python
+        uses: actions/setup-python@8d9ed9ac5c53483de85588cdf95a591a75ab9f55 # v5
+        with:
+          python-version: '3.13'
+
+      - name: Install Ansible
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible
+
+      - name: Request OIDC Token
+        run: |
+          echo "Requesting OIDC token..."
+          JWT=$(curl -s -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -r '.value')
+          echo "INFISICAL_AUTH_JWT=$JWT" >> $GITHUB_ENV
+
+      - name: Get app name and Infisical slug
+        run: |
+          repo=${{ github.repository }}
+          app=$(echo "$repo" | cut -d "/" -f 2 | sed 's/compose-//')
+          owner=$(echo "$repo" | cut -d "/" -f 1)
+          slug="${app}-${owner}"
+          if [[ "${{ matrix.environment }}" != "prod" ]]; then
+            app="${app}-${{ matrix.environment }}"
+          fi
+          echo "APP_SHORTNAME=$app" >> $GITHUB_ENV
+          echo "INFISICAL_APP_SECRETS_SLUG=$slug" >> $GITHUB_ENV
+
+      - name: Get Infisical Secrets
+        uses: Infisical/secrets-action@08d433afae6a851f9081d0563a01a55fdf96568b # v1.0.11
+        with:
+          method: "oidc"
+          domain: ${{ secrets.INFISICAL_HOST }}
+          identity-id: ${{ secrets.INFISICAL_MACHINE_IDENTITY_ID }}
+          project-slug: ${{ env.INFISICAL_APP_SECRETS_SLUG }}
+          env-slug: ${{ matrix.environment }}
+          recursive: "true"
+
+      - name: Run Ansible setup playbook
+        run: |
+          make configure
+        env:
+          INFISICAL_MACHINE_IDENTITY_ID: ${{ secrets.INFISICAL_MACHINE_IDENTITY_ID }}
+
+  deploy-compose-app:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment:
+          # - staging
+          - prod
+    name: Deploy Compose Application
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+
+      - name: Set up Python
+        uses: actions/setup-python@8d9ed9ac5c53483de85588cdf95a591a75ab9f55 # v5
+        with:
+          python-version: '3.13'
+
+      - name: Install Ansible
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible
+
+      - name: Request OIDC Token
+        run: |
+          echo "Requesting OIDC token..."
+          JWT=$(curl -s -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -r '.value')
+          echo "INFISICAL_AUTH_JWT=$JWT" >> $GITHUB_ENV
+
+      - name: Get app name and Infisical slug
+        run: |
+          repo=${{ github.repository }}
+          app=$(echo "$repo" | cut -d "/" -f 2 | sed 's/compose-//')
+          owner=$(echo "$repo" | cut -d "/" -f 1)
+          slug="${app}-${owner}"
+          if [[ "${{ matrix.environment }}" != "prod" ]]; then
+            app="${app}-${{ matrix.environment }}"
+          fi
+          echo "APP_SHORTNAME=$app" >> $GITHUB_ENV
+          echo "INFISICAL_APP_SECRETS_SLUG=$slug" >> $GITHUB_ENV
+
+      - name: Get Infisical Secrets
+        uses: Infisical/secrets-action@08d433afae6a851f9081d0563a01a55fdf96568b # v1.0.11
+        with:
+          method: "oidc"
+          domain: ${{ secrets.INFISICAL_HOST }}
+          identity-id: ${{ secrets.INFISICAL_MACHINE_IDENTITY_ID }}
+          project-slug: ${{ env.INFISICAL_APP_SECRETS_SLUG }}
+          env-slug: ${{ matrix.environment }}
+          recursive: "true"
+
+      - name: Run Ansible setup playbook
+        run: |
+          make deploy
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}

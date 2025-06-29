@@ -1,9 +1,17 @@
-.PHONY: clean compose configure lock tf-init tf-plan tf-apply tf-destroy
+.PHONY: clean compose configure deploy update lock tf-init tf-plan tf-apply tf-destroy
 
 compose:
 	@docker compose pull
 	@docker compose build
 	@docker compose up -d
+
+update: ansible/inventory.ini ansible_ssh_private_key
+	@ansible-playbook --private-key ansible_ssh_private_key -i ansible/inventory.ini ansible/update-docker-host.yml
+	@rm -f ansible_ssh_private_key
+
+deploy: ansible/inventory.ini ansible_ssh_private_key
+	@ansible-playbook --private-key ansible_ssh_private_key -i ansible/inventory.ini ansible/deploy-compose-project.yml
+	@rm -f ansible_ssh_private_key
 
 configure: ansible/inventory.ini ansible_ssh_private_key
 	@ansible-playbook --private-key ansible_ssh_private_key -i ansible/inventory.ini ansible/docker-host-setup.yml
@@ -15,7 +23,8 @@ ansible_ssh_private_key:
 
 ansible/inventory.ini:
 	@cp ansible/inventory.ini.template ansible/inventory.ini
-	@echo "$$APP_SHORTNAME.$$LOCAL_DOMAIN ansible_user=ansible" >> ansible/inventory.ini
+	@export HOSTNAME=${APP_SHORTNAME%-$$ENV}
+	@echo "$$HOSTNAME.$$LOCAL_DOMAIN ansible_user=ansible" >> ansible/inventory.ini
 
 tf-destroy: terraform/.terraform.lock.hcl
 	@terraform -chdir=terraform destroy \
