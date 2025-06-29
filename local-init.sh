@@ -9,9 +9,11 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-if ! terraform --version > /dev/null 2>&1; then
-  echo "Terraform CLI is not installed. Please install it first."
-  exit 1
+if [ $1 = "infra" ]; then
+  if ! terraform --version > /dev/null 2>&1; then
+    echo "Terraform CLI is not installed. Please install it first."
+    exit 1
+  fi
 fi
 
 if ! infisical --version > /dev/null 2>&1; then
