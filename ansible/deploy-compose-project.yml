@@ -2,6 +2,8 @@
 - name: Deploy docker compose project
   hosts: docker_host
   become: yes
+  become_method: sudo
+  become_flags: '-E'
   tasks:
     - name: Ensure repository is present and up to date
       ansible.builtin.git:
