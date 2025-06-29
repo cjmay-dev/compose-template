@@ -22,6 +22,7 @@ module "infisical_project" {
   APP_SECRETS   = {
     "APP_SHORTNAME" = var.APP_SHORTNAME
     "ORG_SHORTNAME" = var.ORG_SHORTNAME
+    "LOCAL_DOMAIN" = data.infisical_secrets.proxmox.secrets["LOCAL_DOMAIN"].value
     "ANSIBLE_BECOME_PASSWORD" = module.proxmox_vm.ansible_password
     "ANSIBLE_SSH_PRIVATE_KEY" = module.proxmox_vm.ansible_ssh_private_key
     "CLOUDFLARE_DOMAIN" = data.infisical_secrets.cloudflare.secrets["CLOUDFLARE_DOMAIN"].value
