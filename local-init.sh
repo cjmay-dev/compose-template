@@ -45,10 +45,9 @@ if [ "$(jq -r '.defaultEnvironment' .infisical.json)" = "" ]; then
   # assume the local environment is "dev"
   jq '.defaultEnvironment="dev"' .infisical.json > /tmp/infisical.$$.json \
     && mv /tmp/infisical.$$.json .infisical.json
-  echo "Infisical initialized with default environment 'dev'."
+  echo -e "\nInfisical initialized with default environment 'dev'."
   echo "Manually edit .infisical.json to change the default environment."
-  echo
-  echo "Re-run this script after you change the environment."
+  echo "Re-run this script if you change the environment."
 fi
 
 infisical secrets --plain --recursive > .env.local 2> /dev/null
