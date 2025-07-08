@@ -2,6 +2,8 @@
 - name: Update docker host and compose images
   hosts: docker_host
   become: yes
+  become_method: sudo
+  become_flags: '-E'
   tasks:
     - name: Update package cache
       apt:
