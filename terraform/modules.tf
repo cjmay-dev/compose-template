@@ -20,19 +20,21 @@ module "cloudflare_tunnel" {
 module "infisical_project" {
   source        = "./modules/infisical-project"
   APP_SECRETS   = {
-    "APP_SHORTNAME" = var.APP_SHORTNAME
-    "ORG_SHORTNAME" = var.ORG_SHORTNAME
-    "LOCAL_DOMAIN" = data.infisical_secrets.proxmox.secrets["LOCAL_DOMAIN"].value
-    "GITHUB_REPOSITORY" = var.GITHUB_REPOSITORY
-    "ANSIBLE_BECOME_PASSWORD" = module.proxmox_vm.ansible_password
-    "ANSIBLE_SSH_PRIVATE_KEY" = module.proxmox_vm.ansible_ssh_private_key
-    "CLOUDFLARE_DOMAIN" = data.infisical_secrets.cloudflare.secrets["CLOUDFLARE_DOMAIN"].value
-    "CLOUDFLARE_TUNNEL_TOKEN" = module.cloudflare_tunnel.tunnel_token
-    "B2_BUCKET_KEY_ID" = module.b2_bucket.bucket_key_id
-    "B2_BUCKET_KEY_SECRET" = module.b2_bucket.bucket_key_secret
-    "RESTIC_REPOSITORY" = module.b2_bucket.bucket_s3_uri
-    "RESTIC_BACKUP_PASSWORD" = data.infisical_secrets.backup.secrets["RESTIC_BACKUP_PASSWORD"].value
+    "ANSIBLE_BECOME_PASSWORD"   = module.proxmox_vm.ansible_password
+    "ANSIBLE_SSH_PRIVATE_KEY"   = module.proxmox_vm.ansible_ssh_private_key
+    "APP_SHORTNAME"             = var.APP_SHORTNAME
+    "B2_BUCKET_KEY_ID"          = module.b2_bucket.bucket_key_id
+    "B2_BUCKET_KEY_SECRET"      = module.b2_bucket.bucket_key_secret
+    "CLOUDFLARE_DOMAIN"         = data.infisical_secrets.cloudflare.secrets["CLOUDFLARE_DOMAIN"].value
+    "CLOUDFLARE_TUNNEL_TOKEN"   = module.cloudflare_tunnel.tunnel_token
+    "GITHUB_REPOSITORY"         = var.GITHUB_REPOSITORY
+    "LOCAL_DOMAIN"              = data.infisical_secrets.proxmox.secrets["LOCAL_DOMAIN"].value
+    "ORG_SHORTNAME"             = var.ORG_SHORTNAME
+    "RESTIC_BACKUP_PASSWORD"    = data.infisical_secrets.backup.secrets["RESTIC_BACKUP_PASSWORD"].value
+    "RESTIC_REPOSITORY"         = module.b2_bucket.bucket_s3_uri
     "STACKBACK_DISCORD_WEBHOOK" = data.infisical_secrets.backup.secrets["STACKBACK_DISCORD_WEBHOOK"].value
+    "TS_OAUTH_CLIENT_ID"        = data.infisical_secrets.tailscale.secrets["TS_OAUTH_CLIENT_ID"].value
+    "TS_OAUTH_SECRET"          = data.infisical_secrets.tailscale.secrets["TS_OAUTH_SECRET"].value
   }
   APP_SHORTNAME = var.APP_SHORTNAME
   ORG_SHORTNAME = var.ORG_SHORTNAME
