@@ -61,7 +61,7 @@ jobs:
           echo "INFISICAL_AUTH_JWT=$JWT" >> $GITHUB_ENV
 
       - name: Debug OIDC Claims
-        uses: github/actions-oidc-debugger@5482bb8a8e47c7633a1c4ea1cd5613cb5f2c4800
+        uses: github/actions-oidc-debugger@2e9ba5d3f4bebaad1f91a2cede055115738b7ae8
         with:
           audience: '${{ github.server_url }}/${{ github.repository_owner }}'
 
