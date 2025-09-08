@@ -25,9 +25,10 @@ ansible_ssh_private_key:
 
 ansible/inventory.ini:
 	@cp ansible/inventory.ini.template ansible/inventory.ini
-	@export HOSTNAME=$${APP_SHORTNAME}$$([ "$$ENV" != "prod" ] && echo "-$$ENV" || echo "")
-	@echo "$${HOSTNAME}.$${LOCAL_DOMAIN} ansible_user=ansible" >> ansible/inventory.ini
-	@echo "Added $${HOSTNAME}.$${LOCAL_DOMAIN} to ansible/inventory.ini"
+	@BASENAME="$${APP_SHORTNAME%-$$ENV}"; \
+	HOSTNAME="$$BASENAME$$( [ "$$ENV" = "prod" ] || echo "-$$ENV" )"; \
+	echo "$$HOSTNAME.$${LOCAL_DOMAIN} ansible_user=ansible" >> ansible/inventory.ini; \
+	echo "Added $$HOSTNAME.$${LOCAL_DOMAIN} to ansible/inventory.ini"
 
 tf-destroy: terraform/.terraform.lock.hcl
 	@terraform -chdir=terraform destroy \
