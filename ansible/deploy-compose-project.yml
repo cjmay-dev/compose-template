@@ -12,6 +12,12 @@
         version: main
         update: yes
 
+    - name: Lock app directory permissions
+      file:
+        path: /opt/app
+        state: directory
+        mode: '0755'
+
     - name: Deploy docker compose project
       shell: |
         cd /opt/app
