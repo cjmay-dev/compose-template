@@ -178,10 +178,12 @@ jobs:
 
       - name: Run Ansible setup playbook
         run: |
+          set -o pipefail
           make configure | tee configure.log
         env:
+          ANSIBLE_DISPLAY_OK_HOSTS: 'false'
+          ANSIBLE_DISPLAY_SKIPPED_HOSTS: 'false'
           ANSIBLE_FORCE_COLOR: '1'
-          ANSIBLE_STDOUT_CALLBACK: actionable
           INFISICAL_MACHINE_IDENTITY_ID: ${{ secrets.INFISICAL_MACHINE_IDENTITY_ID }}
 
       - name: Generate job summary
@@ -251,10 +253,12 @@ jobs:
 
       - name: Run Ansible setup playbook
         run: |
+          set -o pipefail
           make deploy | tee deploy.log
         env:
+          ANSIBLE_DISPLAY_OK_HOSTS: 'false'
+          ANSIBLE_DISPLAY_SKIPPED_HOSTS: 'false'
           ANSIBLE_FORCE_COLOR: '1'
-          ANSIBLE_STDOUT_CALLBACK: actionable
 
       - name: Generate job summary
         run: |
