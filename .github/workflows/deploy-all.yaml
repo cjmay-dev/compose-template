@@ -178,10 +178,18 @@ jobs:
 
       - name: Run Ansible setup playbook
         run: |
-          make configure
+          make configure | tee configure.log
         env:
           ANSIBLE_FORCE_COLOR: '1'
+          ANSIBLE_STDOUT_CALLBACK: actionable
           INFISICAL_MACHINE_IDENTITY_ID: ${{ secrets.INFISICAL_MACHINE_IDENTITY_ID }}
+
+      - name: Generate job summary
+        run: |
+          echo "## Host Changes" >> $GITHUB_STEP_SUMMARY
+          echo "```console" >> $GITHUB_STEP_SUMMARY
+          cat configure.log >> $GITHUB_STEP_SUMMARY
+          echo "```" >> $GITHUB_STEP_SUMMARY
 
   deploy-compose-app:
     runs-on: ubuntu-latest
@@ -243,6 +251,14 @@ jobs:
 
       - name: Run Ansible setup playbook
         run: |
-          make deploy
+          make deploy | tee deploy.log
         env:
           ANSIBLE_FORCE_COLOR: '1'
+          ANSIBLE_STDOUT_CALLBACK: actionable
+
+      - name: Generate job summary
+        run: |
+          echo "## App Changes" >> $GITHUB_STEP_SUMMARY
+          echo "```console" >> $GITHUB_STEP_SUMMARY
+          cat deploy.log >> $GITHUB_STEP_SUMMARY
+          echo "```" >> $GITHUB_STEP_SUMMARY
