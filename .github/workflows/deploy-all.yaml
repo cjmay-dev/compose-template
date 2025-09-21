@@ -180,6 +180,7 @@ jobs:
         run: |
           make configure
         env:
+          ANSIBLE_FORCE_COLOR: '1'
           INFISICAL_MACHINE_IDENTITY_ID: ${{ secrets.INFISICAL_MACHINE_IDENTITY_ID }}
 
   deploy-compose-app:
@@ -243,3 +244,5 @@ jobs:
       - name: Run Ansible setup playbook
         run: |
           make deploy
+        env:
+          ANSIBLE_FORCE_COLOR: '1'
