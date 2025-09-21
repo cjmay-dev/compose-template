@@ -11,6 +11,7 @@
         dest: /opt/app
         version: main
         update: yes
+        force: yes
 
     - name: Lock app directory permissions
       file:
