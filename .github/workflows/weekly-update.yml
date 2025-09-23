@@ -75,6 +75,15 @@ jobs:
         run: |
           set -o pipefail
           make update | tee update.log
+        env:
+          ANSIBLE_DISPLAY_OK_HOSTS: 'false'
+          ANSIBLE_DISPLAY_SKIPPED_HOSTS: 'false'
+          ANSIBLE_FORCE_COLOR: '1'
+          ENVIRONMENT: ${{ matrix.environment }}
+          INFISICAL_API_URL: "https://${{ secrets.INFISICAL_HOST }}/api"
+          INFISICAL_JWT: ${{ env.INFISICAL_JWT }}
+          INFISICAL_MACHINE_IDENTITY_ID: ${{ secrets.INFISICAL_MACHINE_IDENTITY_ID }}
+          INFISICAL_PROJECT_ID: ${{ env.INFISICAL_PROJECT_ID }}
 
       - name: Generate job summary
         run: |

@@ -3,7 +3,6 @@
   hosts: docker_host
   become: yes
   become_method: sudo
-  become_flags: '-E'
   tasks:
     - name: Update package cache
       apt:
@@ -40,11 +39,25 @@
         update: yes
         force: yes
 
+    - name: Log into Infisical CLI
+      shell: |
+        infisical login --method oidc-jwt
+      environment:
+        INFISICAL_API_URL: "{{ lookup('env', 'INFISICAL_API_URL') }}"
+        INFISICAL_JWT: "{{ lookup('env', 'INFISICAL_AUTH_JWT') }}"
+        INFISICAL_MACHINE_IDENTITY_ID: "{{ lookup('env', 'INFISICAL_MACHINE_IDENTITY_ID') }}"
+
     - name: Update & restart docker compose project
       shell: |
         cd /opt/app
-        make compose
-      environment: "{{ ansible_env }}"
+        infisical run --projectId $INFISICAL_PROJECT_ID --env $ENVIRONMENT -- make compose
+      environment:
+        ENVIRONMENT: "{{ lookup('env', 'ENVIRONMENT') }}"
+        INFISICAL_PROJECT_ID: "{{ lookup('env', 'INFISICAL_PROJECT_ID') }}"
+
+    - name: Log out of Infisical CLI
+      shell: |
+        infisical reset
 
     - name: Display update summary
       debug:
