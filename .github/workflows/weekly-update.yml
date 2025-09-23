@@ -62,6 +62,23 @@ jobs:
           env-slug: ${{ matrix.environment }}
           recursive: "true"
 
+      - name: Setup Tailscale for access to DMZ
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ env.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ env.TS_OAUTH_SECRET }}
+          tags: tag:ci
+          args: --accept-routes
+          use-cache: "true"
+
       - name: Run Ansible update playbook
         run: |
-          make update
+          set -o pipefail
+          make update | tee update.log
+
+      - name: Generate job summary
+        run: |
+          echo "## Host Changes" >> $GITHUB_STEP_SUMMARY
+          echo "```console" >> $GITHUB_STEP_SUMMARY
+          cat update.log >> $GITHUB_STEP_SUMMARY
+          echo "```" >> $GITHUB_STEP_SUMMARY
