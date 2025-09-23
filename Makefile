@@ -58,7 +58,8 @@ terraform/backend.tf:
 
 lock:
 	@echo "Removing access to secrets..."
-	@rm -f .env.local
+	@rm -f .env*
+	@rm -f .infisical*
 	@infisical reset
 
 clean:
