@@ -48,6 +48,19 @@ jobs:
         with:
           terraform_wrapper: false
 
+      - name: Set up Terraform Plugin Cache Directory
+        run: |
+          mkdir -p ~/.terraform.d/plugin-cache
+          echo "TF_PLUGIN_CACHE_DIR=$HOME/.terraform.d/plugin-cache" >> $GITHUB_ENV
+
+      - name: Cache Terraform Providers
+        uses: actions/cache@v4 # Use the latest version of actions/cache
+        with:
+          path: ~/.terraform.d/plugin-cache
+          key: ${{ runner.os }}-terraform-providers-${{ hashFiles('**/.terraform.lock.hcl') }}
+          restore-keys: |
+            ${{ runner.os }}-terraform-providers-
+
       - name: Setup Python
         uses: actions/setup-python@8d9ed9ac5c53483de85588cdf95a591a75ab9f55 # v5
         with:
