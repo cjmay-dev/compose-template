@@ -41,7 +41,7 @@
 
     - name: Log into Infisical CLI
       shell: |
-        infisical login --method oidc-jwt
+        infisical login --method oidc-auth
       environment:
         INFISICAL_API_URL: "{{ lookup('env', 'INFISICAL_API_URL') }}"
         INFISICAL_JWT: "{{ lookup('env', 'INFISICAL_AUTH_JWT') }}"
