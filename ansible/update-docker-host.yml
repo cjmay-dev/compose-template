@@ -38,13 +38,13 @@
         dest: /opt/app
         version: main
         update: yes
+        force: yes
 
-    - name: Update docker compose project
+    - name: Update & restart docker compose project
       shell: |
         cd /opt/app
         make compose
       environment: "{{ ansible_env }}"
-      when: reboot_required.stat.exists
 
     - name: Display update summary
       debug:
