@@ -267,7 +267,7 @@ jobs:
         env:
           ANSIBLE_DISPLAY_OK_HOSTS: 'false'
           ANSIBLE_DISPLAY_SKIPPED_HOSTS: 'false'
-          ENVIRONMENT: ${{ matrix.environment }}
+          ENVIRONMENT: ${{ env.environment }}
           INFISICAL_API_URL: "${{ secrets.INFISICAL_HOST }}/api"
           INFISICAL_JWT: ${{ env.INFISICAL_JWT }}
           INFISICAL_MACHINE_IDENTITY_ID: ${{ secrets.INFISICAL_MACHINE_IDENTITY_ID }}
