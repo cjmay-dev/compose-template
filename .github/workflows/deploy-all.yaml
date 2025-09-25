@@ -262,6 +262,7 @@ jobs:
       - name: Run Ansible setup playbook
         run: |
           set -o pipefail
+          echo "ENVIRONMENT in GHA: $ENVIRONMENT"
           make deploy | tee deploy.log
         env:
           ANSIBLE_DISPLAY_OK_HOSTS: 'false'

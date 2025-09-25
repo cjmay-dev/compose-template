@@ -21,7 +21,9 @@
     - name: Deploy docker compose project
       shell: |
         cd /opt/app
+        echo "ENVIRONMENT in playbook: $ENVIRONMENT"
         export INFISICAL_TOKEN=$(infisical login --method oidc-auth --silent --plain)
+        infisical run --projectId $INFISICAL_PROJECT_ID --env $ENVIRONMENT -- echo "Restic repo from Infisical: $RESTIC_REPOSITORY"
         infisical run --projectId $INFISICAL_PROJECT_ID --env $ENVIRONMENT -- make compose
       environment:
         INFISICAL_API_URL: "{{ lookup('env', 'INFISICAL_API_URL') }}"
