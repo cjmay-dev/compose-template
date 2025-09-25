@@ -18,22 +18,14 @@
         state: directory
         mode: '0755'
 
-    - name: Log into Infisical CLI
+    - name: Deploy docker compose project
       shell: |
-        infisical login --method oidc-auth
+        cd /opt/app
+        export INFISICAL_TOKEN=$(infisical login --method oidc-auth --silent --plain)
+        infisical run --projectId $INFISICAL_PROJECT_ID --env $ENVIRONMENT -- make compose
       environment:
         INFISICAL_API_URL: "{{ lookup('env', 'INFISICAL_API_URL') }}"
         INFISICAL_JWT: "{{ lookup('env', 'INFISICAL_AUTH_JWT') }}"
         INFISICAL_MACHINE_IDENTITY_ID: "{{ lookup('env', 'INFISICAL_MACHINE_IDENTITY_ID') }}"
-
-    - name: Deploy docker compose project
-      shell: |
-        cd /opt/app
-        infisical run --projectId $INFISICAL_PROJECT_ID --env $ENVIRONMENT -- make compose
-      environment:
         INFISICAL_PROJECT_ID: "{{ lookup('env', 'INFISICAL_PROJECT_ID') }}"
         ENVIRONMENT: "{{ lookup('env', 'ENVIRONMENT') }}"
-
-    - name: Log out of Infisical CLI
-      shell: |
-        infisical reset
