@@ -10,7 +10,7 @@ update: ansible/inventory.ini ansible_ssh_private_key
 	@rm -f ansible_ssh_private_key
 
 deploy: ansible/inventory.ini ansible_ssh_private_key
-	@ansible-playbook -v --private-key ansible_ssh_private_key -i ansible/inventory.ini ansible/deploy-compose-project.yml
+	@ansible-playbook --private-key ansible_ssh_private_key -i ansible/inventory.ini ansible/deploy-compose-project.yml
 	@rm -f ansible_ssh_private_key
 
 configure: ansible/inventory.ini ansible_ssh_private_key

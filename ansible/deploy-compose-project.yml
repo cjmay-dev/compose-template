@@ -22,7 +22,6 @@
       shell: |
         cd /opt/app
         export INFISICAL_TOKEN=$(infisical login --method oidc-auth --silent --plain)
-        infisical run --projectId $INFISICAL_PROJECT_ID --env $ENVIRONMENT -- echo "Restic repo from Infisical: $RESTIC_REPOSITORY"
         infisical run --projectId $INFISICAL_PROJECT_ID --env $ENVIRONMENT -- make compose
       environment:
         INFISICAL_API_URL: "{{ lookup('env', 'INFISICAL_API_URL') }}"
