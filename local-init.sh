@@ -21,7 +21,7 @@ if ! infisical --version > /dev/null 2>&1; then
   exit 1
 fi 
 
-infisical export -t nonexistent  # prompts login or does nothing
+infisical token  # prompts login or does nothing
 
 if [ $1 = "infra" ]; then
   echo -e "Initializing local infrastructure development environment...\n"
