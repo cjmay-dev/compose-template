@@ -197,10 +197,10 @@ jobs:
 
       - name: Generate job summary
         run: |
-          echo "## Host Changes" >> $GITHUB_STEP_SUMMARY
-          echo "```console" >> $GITHUB_STEP_SUMMARY
+          echo '## Host Changes' >> $GITHUB_STEP_SUMMARY
+          echo '```console' >> $GITHUB_STEP_SUMMARY
           cat configure.log >> $GITHUB_STEP_SUMMARY
-          echo "```" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
 
   deploy-compose-app:
     runs-on: ubuntu-latest
@@ -278,5 +278,5 @@ jobs:
         run: |
           echo '## Host Changes' >> $GITHUB_STEP_SUMMARY
           echo '```console' >> $GITHUB_STEP_SUMMARY
-          cat update.log >> $GITHUB_STEP_SUMMARY
+          cat deploy.log >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
