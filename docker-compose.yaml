@@ -12,12 +12,7 @@ services:
     volumes:
       - ./volumes/example-volume:/example
     labels:
-      - stack-back.volumes=true                          # backup container volumes
-      # - stack-back.volumes.include=example               # only backup specific volumes
-      # - stack-back.volumes.exclude=example               # don't backup specific volumes
-      # - stack-back.mariadb=true                          # backup mariadb database dump
-      # - stack-back.mysql=true                            # backup mysql database dump
-      # - stack-back.postgres=true                         # backup postgres database dump
+      # Point Cloudflare Tunnel to this service via Traefik
       - traefik.enable=true
       - traefik.http.routers.example.rule=Host(`${APP_SHORTNAME}.${CLOUDFLARE_DOMAIN}`)
       - traefik.http.routers.example.entrypoints=web
