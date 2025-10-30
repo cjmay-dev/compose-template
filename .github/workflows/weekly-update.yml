@@ -16,8 +16,8 @@ jobs:
     strategy:
       matrix:
         environment:
-          # - staging
           - prod
+          # - staging
     name: Update Docker Host and Images
     
     steps:

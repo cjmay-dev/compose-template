@@ -4,21 +4,13 @@ on:
   push:
     branches:
       - 'main'
+      # - 'staging'
     paths-ignore:
       - '.github/workflows/weekly-update.yml'
       - '.gitignore'
       - 'ansible/update-docker-host.yml'
       - 'local-init.sh'
       - 'README.md'
-  # Uncomment the following lines to enable staging environment
-  # pull_request:
-  #   branches:
-  #     - 'main'
-  #   paths-ignore:
-  #     - '.github/workflows/weekly-update.yml'
-  #     - '.gitignore'
-  #     - 'local-init.sh'
-  #     - 'README.md'
   workflow_dispatch:
     inputs:
       TF_LOG:
@@ -27,7 +19,7 @@ on:
         default: 'INFO'
 
 env:
-  environment: ${{ github.event_name == 'pull_request' && 'staging' || 'prod' }} # set environment based on event type
+  environment: ${{ github.ref_name == 'main' && 'prod' || 'staging' }}
 
 permissions:
   id-token: write
