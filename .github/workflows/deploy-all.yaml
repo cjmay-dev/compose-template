@@ -185,6 +185,7 @@ jobs:
           ANSIBLE_DISPLAY_OK_HOSTS: 'false'
           ANSIBLE_DISPLAY_SKIPPED_HOSTS: 'false'
           INFISICAL_MACHINE_IDENTITY_ID: ${{ secrets.INFISICAL_MACHINE_IDENTITY_ID }}
+          LOCAL_DOMAIN: ${{ env.LOCAL_DOMAIN }}
 
       - name: Generate job summary
         run: |
