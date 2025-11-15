@@ -56,5 +56,6 @@ module "proxmox_vm" {
   MEMORY      = 4096
   DISK_SIZE   = 64
   DATASTORE_ID  = data.infisical_secrets.proxmox.secrets["DATASTORE_ID"].value
-  NETWORK_BRIDGE = "vmbr1"
+  NETWORK_BRIDGE = data.infisical_secrets.proxmox.secrets["NETWORK_BRIDGE"].value
+  RESOURCE_POOL_ID     = data.infisical_secrets.proxmox.secrets["RESOURCE_POOL_ID"].value
 }
