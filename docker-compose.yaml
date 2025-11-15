@@ -17,6 +17,3 @@ services:
       - traefik.http.routers.example.rule=Host(`${APP_SHORTNAME}.${CLOUDFLARE_DOMAIN}`)
       - traefik.http.routers.example.entrypoints=web
       - traefik.http.services.example.loadbalancer.server.port=80   # change to your service's HTTP port
-
-networks:
-  database-backup: # DO NOT CHANGE; required on SQL database containers for backups
