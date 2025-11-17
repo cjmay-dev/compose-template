@@ -1,0 +1,18 @@
+name: Workflow Log Secret Scan
+
+on:
+  workflow_run:
+    workflows: ["Weekly Updates", "Deploy Infrastructure and Application"]
+    types:
+      - completed
+
+jobs:
+  log-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: lawndoc/ggshield-workflow-log-secret-scan@v1
+        with:
+          discord-webhook-url: ${{ secrets.SECRET_SCAN_WEBHOOK_URL }}
+          ggshield-token: ${{ secrets.GGSHIELD_TOKEN }}
+          workflow-run-attempt: ${{ github.event.workflow_run.id }}
+          workflow-run-id: ${{ github.event.workflow_run.run_attempt }}
