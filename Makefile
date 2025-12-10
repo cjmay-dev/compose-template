@@ -2,7 +2,7 @@
 
 compose:
 	@docker compose pull
-	@docker compose up --build -d --remove-orphans
+	@docker compose up -d --build --force-recreate --remove-orphans
 
 update: ansible/inventory.ini ansible_ssh_private_key
 	@ansible-playbook --private-key ansible_ssh_private_key -i ansible/inventory.ini ansible/update-docker-host.yml
